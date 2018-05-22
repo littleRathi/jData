@@ -1,2 +1,2 @@
 # jData
-Start new porject
+Start new project
