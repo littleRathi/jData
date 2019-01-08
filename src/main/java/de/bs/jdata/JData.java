@@ -20,4 +20,9 @@ public class JData {
 	public static <T> ObjectManagerBuilder<T> forObjectClass(final Class<T> objectClass) {
 		return null;
 	}
+	
+	// within the target object, must be a object attribute (not static) annotated with @Target
+	public static <T> ObjectManagerBuilder<T> forTarget(Object target) {
+		return null;
+	}
 }
