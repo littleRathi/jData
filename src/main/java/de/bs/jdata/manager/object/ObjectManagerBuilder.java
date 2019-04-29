@@ -1,15 +1,19 @@
 package de.bs.jdata.manager.object;
 
 import de.bs.jdata.configurator.Configurator;
-import de.bs.jdata.transformator.Transformator;
+import de.bs.jdata.manager.ObjectDefinition;
+import de.bs.jdata.tracking.Tracking;
 
 public class ObjectManagerBuilder<T> {
-	public ObjectManagerBuilder<T> bind(final Configurator configurator) {
-		return this;
-	}
+	private ObjectDefinition<T> objectDefinition;
+	private Tracking tracker;
 	
-	// TODO: perhaps not necessary.
-	public ObjectManagerBuilder<T> with(final Transformator transformator) {
+	public ObjectManagerBuilder(final ObjectDefinition<T> objectDefinition, final Tracking tracker) {
+		this.objectDefinition = objectDefinition;
+		this.tracker = tracker;
+	}
+
+	public ObjectManagerBuilder<T> bind(final Configurator configurator) {
 		return this;
 	}
 	

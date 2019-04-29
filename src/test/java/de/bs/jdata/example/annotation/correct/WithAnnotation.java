@@ -7,7 +7,7 @@ import de.bs.jdata.JDataField;
 import de.bs.jdata.JDataMode;
 import de.bs.jdata.JDataObject;
 
-@JDataObject(name = "Annotation Example", desc = "Example using all existing annotations of this library.. Meaningful to this example")
+@JDataObject(name = "Annotation Example", desc = "Example using all existing annotations of this library.. Meaningful to this example", mode = JDataMode.USE_ONLY_ANNOTATIONS)
 public class WithAnnotation {
 	@JDataField(name = "abc", desc = "some description to this field")
 	private String field1;
