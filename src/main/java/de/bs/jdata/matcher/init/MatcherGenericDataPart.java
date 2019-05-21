@@ -1,7 +1,5 @@
 package de.bs.jdata.matcher.init;
 
-import java.lang.reflect.Type;
-
 import de.bs.jdata.matcher.MatcherElement;
 
 /**
@@ -12,17 +10,17 @@ import de.bs.jdata.matcher.MatcherElement;
  *
  */
 public class MatcherGenericDataPart implements GenericDataPart {
-	private Type type;
+	private String type;
 	private MatcherElement initializer;
 
-	public MatcherGenericDataPart(final Type type, final MatcherElement initializer) {
+	public MatcherGenericDataPart(final String type, final MatcherElement initializer) {
 		this.type = type;
 		this.initializer = initializer;
 	}
 
 	@Override
 	public String getGenericType() {
-		return type.getTypeName();
+		return type;
 	}
 
 	@Override

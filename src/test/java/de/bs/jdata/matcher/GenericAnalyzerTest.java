@@ -24,6 +24,7 @@ public class GenericAnalyzerTest {
 				new GenericElement("b"));
 		
 		assertThat(result, equalTo(expected));
+		assertThat(result.toString(), equalTo(expected.toString()));
 	}
 	
 	@Test
@@ -39,6 +40,7 @@ public class GenericAnalyzerTest {
 										new GenericElement("e")))));
 		
 		assertThat(result, equalTo(expected));
+		assertThat(result.toString(), equalTo(expected.toString()));
 	}
 	
 	@Test
@@ -56,6 +58,7 @@ public class GenericAnalyzerTest {
 								new GenericElement("e"))));
 		
 		assertThat(result, equalTo(expected));
+		assertThat(result.toString(), equalTo(expected.toString()));
 	}
 	
 	@Test
@@ -71,6 +74,7 @@ public class GenericAnalyzerTest {
 				new GenericElement("e"));
 		
 		assertThat(result, equalTo(expected));
+		assertThat(result.toString(), equalTo(expected.toString()));
 	}
 	
 	@Test
@@ -92,6 +96,7 @@ public class GenericAnalyzerTest {
 						new GenericElement("g")));
 		
 		assertThat(result, equalTo(expected));
+		assertThat(result.toString(), equalTo(expected.toString()));
 	}
 	
 	@Test
@@ -114,6 +119,9 @@ public class GenericAnalyzerTest {
 								new GenericElement("l"),
 								new GenericElement("m"),
 								new GenericElement("n"))));
+		
+		assertThat(result, equalTo(expected));
+		assertThat(result.toString(), equalTo(expected.toString()));
 	}
 	
 	@Before

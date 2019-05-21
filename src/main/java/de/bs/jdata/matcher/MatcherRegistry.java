@@ -9,6 +9,7 @@ import de.bs.jdata.matcher.init.GenericData;
 import de.bs.jdata.matcher.init.GenericDataPart;
 import de.bs.jdata.matcher.init.MatcherGenericDataPart;
 import de.bs.jdata.matcher.init.TypeGenericDataPart;
+import de.bs.jdata.util.ClassUtil;
 
 /**
  * Creates and cache Matcher.
@@ -179,7 +180,7 @@ public class MatcherRegistry {
 	 * @return the usable {@link Matcher} instance object
 	 */
 	private Matcher instantiateMatcher(final GenericElement element) {
-		Matcher matcher = (Matcher) instantiate(element.getElementName());
+		Matcher matcher = (Matcher) ClassUtil.instantiate(element.getElementName());
 
 		List<GenericDataPart> parts = processGeneric(element.getGenerics());
 		matcher.init(new GenericData(parts.toArray(new GenericDataPart[parts.size()])));
@@ -202,61 +203,20 @@ public class MatcherRegistry {
 		List<GenericDataPart> parts = new LinkedList<GenericDataPart>();
 
 		for (final GenericElement generic : generics) {
-			Class<?> genericClass = getClass(generic.getElementName());
+			Class<?> genericClass = ClassUtil.getClass(generic.getElementName());
 
 			if (MatcherElement.class.isAssignableFrom(genericClass)) {
-				MatcherElement matcherInitializer = (MatcherElement) instantiate(genericClass);
+				MatcherElement matcherInitializer = (MatcherElement) ClassUtil.instantiate(genericClass);
 
 				List<GenericDataPart> subParts = processGeneric(generic.getGenerics());
 				matcherInitializer.init(new GenericData(subParts.toArray(new GenericDataPart[subParts.size()])));
 
-				parts.add(new MatcherGenericDataPart(null, matcherInitializer));
+				parts.add(new MatcherGenericDataPart(generic.toString(), matcherInitializer));
 			} else {
-				parts.add(new TypeGenericDataPart(null, genericClass));
+				parts.add(new TypeGenericDataPart(generic.toString(), genericClass));
 			}
 		}
 
 		return parts;
-	}
-
-	/**
-	 * Create the {@link Class} object for the passed full qualified name of a
-	 * class.
-	 * 
-	 * @param fullQualifiedName is the full qualified name of a class
-	 * @return the {@link Class} object for the given full qualified name
-	 */
-	private Class<?> getClass(final String fullQualifiedName) {
-		try {
-			return (Class<?>) Class.forName(fullQualifiedName);
-		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("fuckt it", e);
-		}
-	}
-
-	/**
-	 * Create a instance of the given {@link Class} object. It will use the default
-	 * constructor.
-	 * 
-	 * @param objectClass from that the object will be created
-	 * @return the created object
-	 */
-	private Object instantiate(final Class<?> objectClass) {
-		try {
-			return objectClass.getConstructor().newInstance();
-		} catch (Exception e) {
-			throw new IllegalArgumentException("fuck it", e); // proper exception handling
-		}
-	}
-
-	/**
-	 * Creates from the given full qualified name passed as {@link String} parameter
-	 * the object.
-	 * 
-	 * @param fullQualifiedName is the full qualified name of a class
-	 * @return the object from the given full qualified name
-	 */
-	private Object instantiate(final String fullQualifiedName) {
-		return instantiate(getClass(fullQualifiedName));
 	}
 }
