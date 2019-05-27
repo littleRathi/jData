@@ -9,6 +9,7 @@ import de.bs.jdata.matcher.init.GenericData;
 import de.bs.jdata.matcher.init.GenericDataPart;
 import de.bs.jdata.matcher.init.MatcherGenericDataPart;
 import de.bs.jdata.matcher.init.TypeGenericDataPart;
+import de.bs.jdata.matcher.substitute.Substitute;
 import de.bs.jdata.util.ClassUtil;
 
 /**
@@ -205,7 +206,14 @@ public class MatcherRegistry {
 		for (final GenericElement generic : generics) {
 			Class<?> genericClass = ClassUtil.getClass(generic.getElementName());
 
-			if (MatcherElement.class.isAssignableFrom(genericClass)) {
+			if (Substitute.class.isAssignableFrom(genericClass)) {
+				Substitute substitute = (Substitute) ClassUtil.instantiate(genericClass);
+				
+				List<GenericDataPart> subParts = processGeneric(generic.getGenerics());
+				substitute.init(new GenericData(subParts.toArray(new GenericDataPart[subParts.size()])));
+				
+				parts.add(substitute.getGenericDataPart());
+			} else if (MatcherElement.class.isAssignableFrom(genericClass)) {
 				MatcherElement matcherInitializer = (MatcherElement) ClassUtil.instantiate(genericClass);
 
 				List<GenericDataPart> subParts = processGeneric(generic.getGenerics());
