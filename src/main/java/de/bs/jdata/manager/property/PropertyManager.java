@@ -2,7 +2,7 @@ package de.bs.jdata.manager.property;
 
 /**
  * 
- * TODO: check method names (Signatures)
+ * TODO: check method names (Signatures)/ definitions
  * 
  * @author little Rathi
  *

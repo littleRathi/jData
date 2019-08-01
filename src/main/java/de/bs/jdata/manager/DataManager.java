@@ -4,23 +4,43 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.bs.jdata.JData;
+import de.bs.jdata.converter.ConverterRegistry;
 import de.bs.jdata.converter.TypeConverter;
 import de.bs.jdata.manager.object.ObjectExtractor;
-import de.bs.jdata.manager.object.ObjectManagerBuilder;
-import de.bs.jdata.tracking.CallerEntry;
+import de.bs.jdata.manager.object.ObjectManager;
+import de.bs.jdata.manager.object.builder.ObjectManagerBuilder;
+import de.bs.jdata.tracking.CalledEntry;
 import de.bs.jdata.tracking.StackTraceElementEntry;
 import de.bs.jdata.tracking.Tracking;
 import de.bs.jdata.transformator.Transformator;
 
 public class DataManager {
 	public static final String IDENTIFIER = "defaultDataManager";
+
+	private ConverterRegistry converterRegistry = new ConverterRegistry();
 	
 	private final List<String> unallowedPackages = Arrays.asList("java.*", "javax.*");
 	private final Tracking tracker = new Tracking();
 
 	private final ObjectExtractor extractor = new ObjectExtractor();
 	
-	public DataManager addConverter(final Class<? extends TypeConverter> converter) {
+	/**
+	 * Adds a TypeConverter to JData. <code>null</code> or an already existing
+	 * converter leads to an exception.
+	 *
+	 * @param converter that will be added, that last converter will be first checked
+	 * @return the active DataManager
+	 */
+	// TODO: rethinking of throws exception here? good would be throw only on error or warning, these two would be more warning
+	public DataManager addConverter(final Class<? extends TypeConverter<?>> converter) {
+		tracker.add(new StackTraceElementEntry(DataManager.class, JData.class));
+		tracker.add(new CalledEntry(this, IDENTIFIER, "addConverter", "converter", (converter == null ? null : converter.getName())));
+		if (converter == null) {
+			throw new IllegalArgumentException("Pass parameter for 'converter' was null: " + tracker.toString());
+		}
+		if (!converterRegistry.addConverter(converter)) {
+			throw new IllegalArgumentException("Could not add Converter '" + converter.getClass() + ": " + tracker.toString()); // TODO: Exception
+		}
 		return this;
 	}
 
@@ -30,35 +50,24 @@ public class DataManager {
 		return this;
 	}
 
+	/**
+	 * Method to create a build a {@link ObjectManager} to the given {@link Class}
+	 * 
+	 * @param objectClass
+	 * @return
+	 */
 	public <T> ObjectManagerBuilder<T> forObjectClass(final Class<T> objectClass) {
 		Tracking builderTracker = new Tracking(tracker);
 
-		StackTraceElement caller = Tracking.findCallerOf(JData.class, DataManager.class);
-		builderTracker.add(new StackTraceElementEntry(caller));
-		builderTracker.add(new CallerEntry(this, IDENTIFIER, "forObjectClass", "objectClass",
+		builderTracker.add(new StackTraceElementEntry(JData.class, DataManager.class));
+		builderTracker.add(new CalledEntry(this, IDENTIFIER, "forObjectClass", "objectClass",
 				(objectClass == null ? null : objectClass.getName())));
 
 		checkIfClassIsValid(objectClass, builderTracker);
 
-		/*
-		 * Zentrale Stelle, in der die Objektdefinitionen gehalten werden. Diese
-		 * erstellt auch die Objektdefinitionen, falls noch keine existiert. Möglihckeit
-		 * eine eigene Klasse *Constructor (z. B. ObjectConstructor,
-		 * PropertyConstructor,...). Diese kümmern sich um die Erzeugung der jeweiligen
-		 * Elemente.
-		 * 
-		 * this.private ObjectConstructor oc = new OC();
-		 * ObjectDefinition<T> def = oc.get(objectClass);
-		 * 		im get: return from map or return this(oc).construct(objectClass)
-		 * 			im oc.construct wird dann fd:FieldConstructor.construct(?) aufgerufen
-		 * 				im fc.construct wird dann ggf. oc.construct wieder aufgerufen
-		 * 
-		 * FieldManager müssen auch auf ObjectDefinitions verweisen können (sogar schon bedacht?)
-		 * Hinweis (schon längst so definiert, erinnerung): FieldManager, nutzen Converter!
-		 */
 		ObjectDefinition<T> definition = extractor.extract(objectClass);
 
-		return new ObjectManagerBuilder<T>(definition, builderTracker);
+		return new ObjectManagerBuilder<T>(definition, converterRegistry, builderTracker);
 	}
 
 	private void checkIfClassIsValid(final Class<?> objectClass, final Tracking builderTracker) {

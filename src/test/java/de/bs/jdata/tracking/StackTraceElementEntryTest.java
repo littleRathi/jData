@@ -18,7 +18,7 @@ public class StackTraceElementEntryTest {
 	
 	@Test(expected=NullPointerException.class)
 	public void testToStringWithNull() {
-		testee = new StackTraceElementEntry(null);
+		testee = new StackTraceElementEntry((StackTraceElement)null);
 		
 		assertThat(testee.toString(), nullValue());
 	}

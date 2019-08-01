@@ -1,7 +1,20 @@
 package de.bs.jdata.tracking;
 
 /**
- * Format: class[identifier].methode([a : b [, a : b]*]?)
+ * Represents a called element, that is the called specific method.
+ * <p>
+ * Represents an entry that expect also information for the parameters. It
+ * will store not only which class and method is called, it also allow
+ * a identifier, and the parameters name and value.
+ * 
+ * <p>
+ * The parameters name and values are passed in the varargs of parameters, and
+ * must be every time a pair of name and value. If the object is complex
+ * and would create a big String for the value, consider only parts of 
+ * it, like an ID.
+ * 
+ * <p>
+ * Format: &lt;class&gt;[&lt;identifier&gt;].&lt;methodeName&gt;([&lt;a&gt; : &lt;b&gt; [, &lt;a&gt; : &lt;b&gt;]*]?)
  * <p>
  * <ul>
  * 	<li>a is the variable name</li>
@@ -11,13 +24,13 @@ package de.bs.jdata.tracking;
  * @author little Rathi
  *
  */
-public class CallerEntry implements TrackingEntry {
+public class CalledEntry implements TrackingEntry {
 	private Class<?> source;
 	private String identifier;
 	private String calledMethod;
 	private String[] parameters;
 
-	public CallerEntry(Object source, String identifier, String calledMethod, String... parameters) {
+	public CalledEntry(Object source, String identifier, String calledMethod, String... parameters) {
 		this.source = source.getClass();
 		this.identifier = identifier;
 		this.calledMethod = calledMethod;

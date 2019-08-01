@@ -16,7 +16,7 @@ import de.bs.jdata.example.annotation.wrong.use.StaticField;
 import de.bs.jdata.example.annotation.wrong.use.WrongClass;
 import de.bs.jdata.example.no.annotations.correct.WithoutAnnotation;
 import de.bs.jdata.example.no.annotations.no.fields.NoFields;
-import de.bs.jdata.manager.object.ObjectManagerBuilder;
+import de.bs.jdata.manager.object.builder.ObjectManagerBuilder;
 
 public class JDataTest {
 	
